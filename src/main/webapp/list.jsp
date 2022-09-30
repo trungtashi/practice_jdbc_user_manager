@@ -17,6 +17,13 @@
     <h2>
         <a href="/users?action=create">Add New User</a>
     </h2>
+    <form action="/users" method="post">
+        <input type="text" name="search" placeholder="Enter country">
+        <input type="hidden" name="action" value="search">
+        <button type="submit" >Search</button>
+        <a href="/users" >List</a>
+
+    </form>
 </center>
 <div align="center">
     <table border="1" cellpadding="5">
@@ -28,7 +35,9 @@
             <th>Country</th>
             <th>Actions</th>
         </tr>
+        <a href="/users?action=sort&name=${user.name}">Sort by name</a>
         <c:forEach var="user" items="${listUser}">
+
             <tr>
                 <td><c:out value="${user.id}"/></td>
                 <td><c:out value="${user.name}"/></td>

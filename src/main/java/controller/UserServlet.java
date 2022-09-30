@@ -36,6 +36,8 @@ public class UserServlet extends HttpServlet {
                 case "delete":
                     deleteUser(request, response);
                     break;
+                case "sort":
+                    sortUserByName(request,response);
                 default:
                     listUser(request, response);
                     break;
@@ -44,6 +46,20 @@ public class UserServlet extends HttpServlet {
             throw new ServletException(ex);
         }
     }
+
+    private void sortUserByName(HttpServletRequest request, HttpServletResponse response) {
+        List<User> listUser = userDAO.sortUserByName();
+        request.setAttribute("listUser", listUser);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
+        try {
+            dispatcher.forward(request, response);
+        } catch (ServletException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -59,11 +75,23 @@ public class UserServlet extends HttpServlet {
                 case "edit":
                     updateUser(request, response);
                     break;
+                case "search":
+                    searchByCountry(request,response);
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
     }
+
+    private void searchByCountry(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException,IOException,ServletException{
+        String country = request.getParameter("search");
+        List<User> users = userDAO.searchByCountry(country);
+        request.setAttribute("listUser", users);
+        RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
+        dispatcher.forward(request, response);
+    }
+
     private void listUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         List<User> listUser = userDAO.selectAllUsers();
@@ -71,7 +99,6 @@ public class UserServlet extends HttpServlet {
         RequestDispatcher dispatcher = request.getRequestDispatcher("list.jsp");
         dispatcher.forward(request, response);
     }
-
     private void showNewForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         RequestDispatcher dispatcher = request.getRequestDispatcher("create.jsp");
